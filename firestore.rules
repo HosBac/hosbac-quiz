@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+ match /databases/{database}/documents {
+  function signedIn(){return request.auth != null;}
+  function self(uid){return signedIn() && request.auth.uid == uid;}
+  function admin(){return signedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";}
+  match /users/{uid} {
+    allow read: if self(uid) || admin();
+    allow write: if false; // XP/subscriptions are server-controlled with Admin SDK
+  }
+  match /quiz_config/{id} {
+    allow read: if signedIn();
+    allow write: if admin();
+  }
+  match /quiz_documents/{id} {
+    allow read: if signedIn();
+    allow write: if admin();
+  }
+  match /quiz_sessions/{id} {
+    allow read: if signedIn() && (resource.data.userId == request.auth.uid || admin());
+    allow write: if false; // server only
+  }
+  match /quiz_progress/{id} { allow read: if signedIn() && resource.data.userId == request.auth.uid; allow write: if false; }
+  match /quiz_rag_chunks/{id} { allow read, write: if false; }
+  match /quiz_matches/{id} { allow read: if signedIn(); allow write: if false; }
+  match /quiz_stats/{id} { allow read: if admin(); allow write: if false; }
+ }
+}

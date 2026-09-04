@@ -1,0 +1,19 @@
+{
+  "name": "hosbac-quiz",
+  "version": "31.4.4-pro+",
+  "private": true,
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "dev": "vercel dev",
+    "ingest:3e": "node scripts/ingest-markdown-3e.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.10.0",
+    "pdf-parse": "^1.1.1",
+    "cloudinary": "^2.10.0",
+    "pg": "^8.13.1",
+    "pdfjs-dist": "^3.11.174"
+  }
+}
